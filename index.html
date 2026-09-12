@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pedido do Grupo</title>
+<style>
+  :root {
+    --amarelo: #e8a33d;
+    --amarelo-escuro: #c9832a;
+    --fundo: #fdf6ec;
+    --texto: #3a2c1a;
+    --borda: #e0d0b5;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--fundo);
+    color: var(--texto);
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+  h1 {
+    text-align: center;
+    font-size: 1.6em;
+    margin-bottom: 4px;
+  }
+  .subtitulo {
+    text-align: center;
+    color: #7a6b52;
+    margin-bottom: 20px;
+    font-size: 0.95em;
+  }
+  .opcoes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .opcao-btn {
+    background: white;
+    border: 2px solid var(--borda);
+    border-radius: 10px;
+    padding: 12px 6px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--texto);
+  }
+  .opcao-btn:hover, .opcao-btn:active {
+    background: var(--amarelo);
+    border-color: var(--amarelo-escuro);
+    color: white;
+  }
+  .opcao-btn.outro {
+    background: #f0e6d2;
+    border-style: dashed;
+  }
+  .lista-container {
+    background: white;
+    border-radius: 10px;
+    border: 1px solid var(--borda);
+    padding: 12px;
+    margin-bottom: 20px;
+  }
+  .lista-titulo {
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-size: 1.05em;
+  }
+  .pedido-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 6px;
+    border-bottom: 1px solid #f0e6d2;
+  }
+  .pedido-item:last-child { border-bottom: none; }
+  .pedido-info { font-size: 0.95em; }
+  .pedido-tipo { color: var(--amarelo-escuro); font-weight: 700; }
+  .selo-comum {
+    display: inline-block;
+    background: #d9ecd9;
+    color: #2f6b2f;
+    font-size: 0.72em;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 8px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .remover-btn {
+    background: none;
+    border: none;
+    color: #b04a4a;
+    font-size: 1.1em;
+    cursor: pointer;
+    padding: 2px 8px;
+  }
+  .vazio {
+    color: #a89878;
+    font-style: italic;
+    padding: 8px 0;
+  }
+  .resumo-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px dashed #e8dcc0;
+    font-size: 1em;
+  }
+  .resumo-item:last-child { border-bottom: none; }
+  .resumo-total {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 2px solid var(--amarelo);
+  }
+  .acoes {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .acoes button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 1em;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  #btnImprimir { background: var(--amarelo); color: white; }
+  #btnLimpar { background: #e8e0d0; color: var(--texto); }
+
+  /* Modal para digitar nome */
+  .modal-fundo {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+  .modal-fundo.ativo { display: flex; }
+  .modal-caixa {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    width: 85%;
+    max-width: 340px;
+  }
+  .modal-caixa h3 { margin-top: 0; }
+  .modal-caixa input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid var(--borda);
+    border-radius: 6px;
+    margin: 10px 0;
+  }
+  .modal-comum {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f7f0e0;
+    padding: 8px 10px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    font-size: 0.9em;
+  }
+  .modal-comum input { width: auto; }
+  .modal-dica {
+    font-size: 0.8em;
+    color: #8a7a5c;
+    margin: -4px 0 8px 0;
+  }
+  .modal-botoes { display: flex; gap: 10px; }
+  .modal-botoes button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  #modalConfirmar { background: var(--amarelo); color: white; }
+  #modalCancelar { background: #eee; color: #555; }
+
+  .valores-toggle {
+    background: none;
+    border: 1px dashed var(--amarelo-escuro);
+    color: var(--amarelo-escuro);
+    padding: 10px;
+    width: 100%;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+  .valores-secao {
+    display: none;
+    background: white;
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 20px;
+  }
+  .valores-secao.ativo { display: block; }
+  .valores-subtitulo {
+    font-weight: 700;
+    margin: 14px 0 8px 0;
+    padding-top: 10px;
+    border-top: 1px solid #f0e6d2;
+    font-size: 0.95em;
+    color: var(--amarelo-escuro);
+  }
+  .valores-subtitulo:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+  .valores-campo {
+    margin-bottom: 12px;
+  }
+  .valores-campo label {
+    display: block;
+    font-size: 0.9em;
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .valores-campo input[type="number"] {
+    width: 100%;
+    padding: 9px;
+    border: 1px solid var(--borda);
+    border-radius: 6px;
+    font-size: 1em;
+  }
+  .divisao-opcoes {
+    display: flex;
+    gap: 14px;
+    font-size: 0.88em;
+    margin: 6px 0;
+  }
+  .divisao-opcoes label { font-weight: 400; display: flex; align-items: center; gap: 4px; }
+  .consumidores-lista {
+    display: none;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    background: #faf5e8;
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-top: 4px;
+  }
+  .consumidores-lista.ativo { display: flex; }
+  .consumidores-lista label {
+    font-size: 0.85em;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 400;
+  }
+  .sem-pessoas {
+    font-size: 0.8em;
+    color: #a89878;
+    font-style: italic;
+  }
+  #btnCalcularValores {
+    background: var(--amarelo-escuro);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 4px;
+  }
+  .tabela-pagamento {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 14px;
+    font-size: 0.9em;
+  }
+  .tabela-pagamento th, .tabela-pagamento td {
+    text-align: left;
+    padding: 7px 4px;
+    border-bottom: 1px solid #eee0c8;
+  }
+  .tabela-pagamento th { color: #7a6b52; }
+  .tabela-pagamento td.valor, .tabela-pagamento th.valor { text-align: right; }
+  .tabela-pagamento tr.total-geral td {
+    font-weight: 700;
+    border-top: 2px solid var(--amarelo);
+    border-bottom: none;
+  }
+
+  @media print {
+    .opcoes, .acoes, .modal-fundo, .valores-toggle { display: none !important; }
+    .valores-secao.ativo { border: none; padding: 0; }
+    .valores-campo, .divisao-opcoes, .consumidores-lista, #btnCalcularValores { display: none !important; }
+    body { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<h1>🥟 Pedido do Grupo</h1>
+<div class="subtitulo">Toque na opção, digite o nome de quem pediu</div>
+
+<div class="opcoes" id="opcoes"></div>
+
+<div class="lista-container">
+  <div class="lista-titulo">Pedidos anotados</div>
+  <div id="listaPedidos"><div class="vazio">Nenhum pedido ainda.</div></div>
+</div>
+
+<div class="lista-container">
+  <div class="lista-titulo">Resumo para compra</div>
+  <div id="resumo"><div class="vazio">Sem pedidos para resumir.</div></div>
+</div>
+
+<button class="valores-toggle" id="btnToggleValores">💰 Calcular quanto cada um paga (opcional)</button>
+
+<div class="valores-secao" id="valoresSecao">
+  <div id="camposValores"></div>
+  <button id="btnCalcularValores">Calcular</button>
+  <div id="resultadoPagamento"></div>
+</div>
+
+<div class="acoes">
+  <button id="btnImprimir">🖨️ Imprimir / Enviar</button>
+  <button id="btnLimpar">🗑️ Limpar tudo</button>
+</div>
+
+<!-- Modal -->
+<div class="modal-fundo" id="modalFundo">
+  <div class="modal-caixa">
+    <h3 id="modalTitulo">Nome de quem pediu</h3>
+    <label class="modal-comum">
+      <input type="checkbox" id="modalComum">
+      É item comum (compartilhado, ex: refrigerante)
+    </label>
+    <div class="modal-dica" id="modalDica">Item comum não precisa de um nome — pode deixar em branco ou indicar quem trouxe/lembrou.</div>
+    <input type="text" id="modalInput" placeholder="Digite o nome" autofocus>
+    <div class="modal-botoes">
+      <button id="modalCancelar">Cancelar</button>
+      <button id="modalConfirmar">Adicionar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const TIPOS = [
+  "Queijo", "Carne com queijo", "Carne", "Pizza",
+  "Frango", "Frango com catupiri", "Pernil", "Palmito", "Calabresa",
+  "Pão de queijo", "Salgado", "Assado", "Quibe", "Bacalhau"
+];
+
+// Armazenamento seguro: tenta usar localStorage, mas nunca trava o app
+// se o navegador/visualizador bloquear (ex: preview do WhatsApp, arquivo local, etc)
+const storageDisponivel = (() => {
+  try {
+    const teste = '__teste__';
+    localStorage.setItem(teste, teste);
+    localStorage.removeItem(teste);
+    return true;
+  } catch (e) {
+    return false;
+  }
+})();
+
+function carregarPedidos() {
+  if (!storageDisponivel) return [];
+  try {
+    return JSON.parse(localStorage.getItem('pedidosPasteis') || '[]');
+  } catch (e) {
+    return [];
+  }
+}
+
+let pedidos = carregarPedidos();
+let tipoAtual = null;
+
+function salvar() {
+  if (!storageDisponivel) return;
+  try {
+    localStorage.setItem('pedidosPasteis', JSON.stringify(pedidos));
+  } catch (e) {
+    // se falhar, o app continua funcionando só sem salvar entre sessões
+  }
+}
+
+function montarOpcoes() {
+  const container = document.getElementById('opcoes');
+  container.innerHTML = '';
+  TIPOS.forEach(tipo => {
+    const btn = document.createElement('button');
+    btn.className = 'opcao-btn';
+    btn.textContent = tipo;
+    btn.onclick = () => abrirModal(tipo, false);
+    container.appendChild(btn);
+  });
+  const btnOutro = document.createElement('button');
+  btnOutro.className = 'opcao-btn outro';
+  btnOutro.textContent = 'Outro...';
+  btnOutro.onclick = () => abrirModalOutro();
+  container.appendChild(btnOutro);
+}
+
+function abrirModal(tipo, permitirComum) {
+  tipoAtual = tipo;
+  document.getElementById('modalTitulo').textContent = `${tipo} — nome de quem pediu`;
+  document.getElementById('modalInput').value = '';
+  document.getElementById('modalComum').checked = false;
+
+  const blocoComum = document.getElementById('modalComum').closest('.modal-comum');
+  const dicaComum = document.getElementById('modalDica');
+  if (permitirComum) {
+    blocoComum.style.display = '';
+    dicaComum.style.display = '';
+  } else {
+    blocoComum.style.display = 'none';
+    dicaComum.style.display = 'none';
+  }
+
+  document.getElementById('modalFundo').classList.add('ativo');
+  setTimeout(() => document.getElementById('modalInput').focus(), 50);
+}
+
+function abrirModalOutro() {
+  const outro = prompt('Digite o nome do item (ex: doce de banana, água...):');
+  if (outro && outro.trim() !== '') {
+    abrirModal(outro.trim(), true);
+  }
+}
+
+document.getElementById('modalCancelar').onclick = () => {
+  document.getElementById('modalFundo').classList.remove('ativo');
+};
+
+document.getElementById('modalConfirmar').onclick = confirmarPedido;
+document.getElementById('modalInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') confirmarPedido();
+});
+
+function confirmarPedido() {
+  const nome = document.getElementById('modalInput').value.trim();
+  const comum = document.getElementById('modalComum').checked;
+
+  if (!comum && nome === '') {
+    alert('Digite o nome de quem pediu.');
+    return;
+  }
+
+  pedidos.push({ tipo: tipoAtual, nome: nome, comum: comum });
+  salvar();
+  renderizar();
+  document.getElementById('modalFundo').classList.remove('ativo');
+}
+
+function removerPedido(index) {
+  pedidos.splice(index, 1);
+  salvar();
+  renderizar();
+}
+
+function renderizar() {
+  const listaDiv = document.getElementById('listaPedidos');
+  if (pedidos.length === 0) {
+    listaDiv.innerHTML = '<div class="vazio">Nenhum pedido ainda.</div>';
+  } else {
+    listaDiv.innerHTML = pedidos.map((p, i) => {
+      const selo = p.comum ? '<span class="selo-comum">comum</span>' : '';
+      const nomeTexto = p.nome ? ` — ${p.nome}` : (p.comum ? ' — (compartilhado)' : '');
+      return `
+      <div class="pedido-item">
+        <span class="pedido-info"><span class="pedido-tipo">${p.tipo}</span>${selo}${nomeTexto}</span>
+        <button class="remover-btn" onclick="removerPedido(${i})">✕</button>
+      </div>
+    `;
+    }).join('');
+  }
+
+  const resumoDiv = document.getElementById('resumo');
+  if (pedidos.length === 0) {
+    resumoDiv.innerHTML = '<div class="vazio">Sem pedidos para resumir.</div>';
+  } else {
+    const contagem = {};
+    pedidos.forEach(p => {
+      contagem[p.tipo] = (contagem[p.tipo] || 0) + 1;
+    });
+    const linhas = Object.entries(contagem)
+      .sort((a, b) => b[1] - a[1])
+      .map(([tipo, qtd]) => `
+        <div class="resumo-item"><span>${tipo}</span><span>${qtd}</span></div>
+      `).join('');
+    resumoDiv.innerHTML = linhas + `
+      <div class="resumo-total"><span>TOTAL</span><span>${pedidos.length}</span></div>
+    `;
+  }
+}
+
+function chaveCampo(tipo) {
+  return tipo.replace(/[^a-zA-Z0-9]/g, '_');
+}
+
+function montarCamposValores() {
+  const container = document.getElementById('camposValores');
+
+  if (pedidos.length === 0) {
+    container.innerHTML = '<div class="vazio">Anote os pedidos primeiro.</div>';
+    return;
+  }
+
+  // Descobre tipos individuais e tipos comuns (baseado no que já foi anotado)
+  const tiposIndividuais = [];
+  const tiposComuns = [];
+  const pessoasSet = new Set();
+
+  pedidos.forEach(p => {
+    if (p.comum) {
+      if (!tiposComuns.includes(p.tipo)) tiposComuns.push(p.tipo);
+    } else {
+      if (!tiposIndividuais.includes(p.tipo)) tiposIndividuais.push(p.tipo);
+      if (p.nome) pessoasSet.add(p.nome);
+    }
+  });
+  const pessoas = Array.from(pessoasSet);
+
+  let html = '';
+
+  if (tiposIndividuais.length > 0) {
+    html += '<div class="valores-subtitulo">Preço de cada item individual</div>';
+    tiposIndividuais.forEach(tipo => {
+      const chave = chaveCampo(tipo);
+      html += `
+        <div class="valores-campo">
+          <label for="valorItem_${chave}">${tipo} (R$ por unidade)</label>
+          <input type="number" id="valorItem_${chave}" step="0.01" min="0" placeholder="Ex: 12.00" data-tipo="${tipo}" class="campo-valor-individual">
+        </div>
+      `;
+    });
+  }
+
+  if (tiposComuns.length > 0) {
+    html += '<div class="valores-subtitulo">Itens comuns (compartilhados)</div>';
+    tiposComuns.forEach(tipo => {
+      const chave = chaveCampo(tipo);
+      const checkboxesPessoas = pessoas.length > 0
+        ? pessoas.map(nome => `
+            <label><input type="checkbox" class="consumidor-check" data-tipo="${tipo}" value="${nome}"> ${nome}</label>
+          `).join('')
+        : '<span class="sem-pessoas">Nenhuma pessoa com pedido individual anotada ainda.</span>';
+
+      html += `
+        <div class="valores-campo">
+          <label for="valorComum_${chave}">${tipo} — preço total (R$)</label>
+          <input type="number" id="valorComum_${chave}" step="0.01" min="0" placeholder="Ex: 25.00" data-tipo="${tipo}" class="campo-valor-comum">
+          <div class="divisao-opcoes">
+            <label><input type="radio" name="divisao_${chave}" value="todos" data-tipo="${tipo}" checked> Dividir entre todos</label>
+            <label><input type="radio" name="divisao_${chave}" value="selecionados" data-tipo="${tipo}"> Só quem consumiu</label>
+          </div>
+          <div class="consumidores-lista" id="consumidores_${chave}">
+            ${checkboxesPessoas}
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  container.innerHTML = html;
+
+  // Liga os radios para mostrar/esconder a lista de consumidores
+  container.querySelectorAll('input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      const tipo = radio.dataset.tipo;
+      const chave = chaveCampo(tipo);
+      const lista = document.getElementById('consumidores_' + chave);
+      if (radio.value === 'selecionados' && radio.checked) {
+        lista.classList.add('ativo');
+      } else if (radio.checked) {
+        lista.classList.remove('ativo');
+      }
+    });
+  });
+}
+
+document.getElementById('btnToggleValores').onclick = () => {
+  const secao = document.getElementById('valoresSecao');
+  secao.classList.toggle('ativo');
+  if (secao.classList.contains('ativo')) {
+    montarCamposValores();
+  }
+};
+
+document.getElementById('btnCalcularValores').onclick = () => {
+  if (pedidos.length === 0) {
+    alert('Anote os pedidos primeiro.');
+    return;
+  }
+
+  // Junta preços dos itens individuais
+  const precoIndividual = {};
+  let faltouPreco = false;
+  document.querySelectorAll('.campo-valor-individual').forEach(input => {
+    const v = parseFloat(input.value);
+    if (isNaN(v)) { faltouPreco = true; return; }
+    precoIndividual[input.dataset.tipo] = v;
+  });
+  if (faltouPreco) {
+    alert('Preencha o preço de todos os itens individuais.');
+    return;
+  }
+
+  // Agrupa pedidos individuais por pessoa
+  const porPessoa = {}; // nome -> { tipo: qtd, ... }
+  const pessoasSet = new Set();
+  pedidos.forEach(p => {
+    if (p.comum || !p.nome) return;
+    pessoasSet.add(p.nome);
+    if (!porPessoa[p.nome]) porPessoa[p.nome] = {};
+    porPessoa[p.nome][p.tipo] = (porPessoa[p.nome][p.tipo] || 0) + 1;
+  });
+  const pessoas = Array.from(pessoasSet);
+
+  if (pessoas.length === 0) {
+    alert('Não há pedidos individuais com nome para calcular o rateio.');
+    return;
+  }
+
+  // Calcula subtotal de itens individuais por pessoa
+  const subtotalIndividual = {};
+  pessoas.forEach(nome => {
+    let subtotal = 0;
+    Object.entries(porPessoa[nome]).forEach(([tipo, qtd]) => {
+      subtotal += qtd * (precoIndividual[tipo] || 0);
+    });
+    subtotalIndividual[nome] = subtotal;
+  });
+
+  // Calcula rateio dos itens comuns
+  const rateioComum = {}; // nome -> valor
+  pessoas.forEach(nome => rateioComum[nome] = 0);
+  const detalhesComuns = [];
+
+  const tiposComuns = [];
+  pedidos.forEach(p => {
+    if (p.comum && !tiposComuns.includes(p.tipo)) tiposComuns.push(p.tipo);
+  });
+
+  tiposComuns.forEach(tipo => {
+    const chave = chaveCampo(tipo);
+    const inputPreco = document.getElementById('valorComum_' + chave);
+    const preco = parseFloat(inputPreco ? inputPreco.value : NaN);
+    if (isNaN(preco)) {
+      faltouPreco = true;
+      return;
+    }
+    const radioSelecionado = document.querySelector(`input[name="divisao_${chave}"]:checked`);
+    const modo = radioSelecionado ? radioSelecionado.value : 'todos';
+
+    let beneficiarios;
+    if (modo === 'todos') {
+      beneficiarios = pessoas;
+    } else {
+      beneficiarios = Array.from(document.querySelectorAll(`.consumidor-check[data-tipo="${tipo}"]:checked`)).map(c => c.value);
+      if (beneficiarios.length === 0) {
+        alert(`Marque quem consumiu "${tipo}", ou escolha "Dividir entre todos".`);
+        faltouPreco = true;
+        return;
+      }
+    }
+
+    const valorPorPessoa = preco / beneficiarios.length;
+    beneficiarios.forEach(nome => {
+      rateioComum[nome] = (rateioComum[nome] || 0) + valorPorPessoa;
+    });
+    detalhesComuns.push(`${tipo}: R$ ${preco.toFixed(2)} ÷ ${beneficiarios.length} pessoa(s)`);
+  });
+
+  if (faltouPreco) return;
+
+  let totalGeral = 0;
+  const linhas = pessoas.map(nome => {
+    const subInd = subtotalIndividual[nome] || 0;
+    const subComum = rateioComum[nome] || 0;
+    const totalPessoa = subInd + subComum;
+    totalGeral += totalPessoa;
+    const qtdItens = Object.values(porPessoa[nome]).reduce((a, b) => a + b, 0);
+    return `
+      <tr>
+        <td>${nome}</td>
+        <td class="valor">${qtdItens}</td>
+        <td class="valor">R$ ${subInd.toFixed(2)}</td>
+        <td class="valor">R$ ${subComum.toFixed(2)}</td>
+        <td class="valor"><strong>R$ ${totalPessoa.toFixed(2)}</strong></td>
+      </tr>
+    `;
+  }).join('');
+
+  const rodape = detalhesComuns.length > 0
+    ? `<div style="font-size:0.82em; color:#8a7a5c; margin-top:8px;">${detalhesComuns.join(' · ')}</div>`
+    : '';
+
+  document.getElementById('resultadoPagamento').innerHTML = `
+    <table class="tabela-pagamento">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th class="valor">Itens</th>
+          <th class="valor">Vlr. individual</th>
+          <th class="valor">Vlr. comum</th>
+          <th class="valor">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${linhas}
+        <tr class="total-geral">
+          <td colspan="4">Total geral</td>
+          <td class="valor">R$ ${totalGeral.toFixed(2)}</td>
+        </tr>
+      </tbody>
+    </table>
+    ${rodape}
+  `;
+};
+
+document.getElementById('btnImprimir').onclick = () => window.print();
+
+document.getElementById('btnLimpar').onclick = () => {
+  if (pedidos.length > 0 && confirm('Tem certeza que quer apagar todos os pedidos?')) {
+    pedidos = [];
+    salvar();
+    renderizar();
+  }
+};
+
+montarOpcoes();
+renderizar();
+</script>
+
+</body>
+</html>
