@@ -295,6 +295,24 @@
     border-top: 2px solid var(--amarelo);
     border-bottom: none;
   }
+  .pago-col { text-align: center !important; }
+  .pago-check {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
+  tr.linha-paga td {
+    background: #eaf5ea;
+    color: #4a7a4a;
+  }
+  .status-pagamentos {
+    margin-top: 12px;
+    padding: 10px;
+    background: #faf5e8;
+    border-radius: 8px;
+    font-size: 0.9em;
+    text-align: center;
+  }
 
   @media print {
     .opcoes, .acoes, .modal-fundo, .valores-toggle { display: none !important; }
@@ -343,6 +361,16 @@
       É item comum (compartilhado, ex: refrigerante)
     </label>
     <div class="modal-dica" id="modalDica">Item comum não precisa de um nome — pode deixar em branco ou indicar quem trouxe/lembrou.</div>
+
+    <div id="modalComumOpcoes" style="display:none;">
+      <div class="divisao-opcoes">
+        <label><input type="radio" name="modalDivisao" value="todos" checked> Todos vão compartilhar</label>
+        <label><input type="radio" name="modalDivisao" value="selecionados"> Selecionar quem compartilha</label>
+      </div>
+      <div class="consumidores-lista" id="modalConsumidores"></div>
+      <input type="text" id="modalOutrasPessoas" placeholder="+ outras pessoas (separe por vírgula)" style="display:none; margin-top:6px;">
+    </div>
+
     <input type="text" id="modalInput" placeholder="Digite o nome" autofocus>
     <div class="modal-botoes">
       <button id="modalCancelar">Cancelar</button>
@@ -409,11 +437,30 @@ function montarOpcoes() {
   container.appendChild(btnOutro);
 }
 
+function nomesConhecidos() {
+  const set = new Set();
+  pedidos.forEach(p => { if (p.nome) set.add(p.nome); });
+  return Array.from(set);
+}
+
+function montarConsumidoresModal() {
+  const lista = document.getElementById('modalConsumidores');
+  const nomes = nomesConhecidos();
+  lista.innerHTML = nomes.length > 0
+    ? nomes.map(nome => `<label><input type="checkbox" class="modal-consumidor-check" value="${nome}"> ${nome}</label>`).join('')
+    : '<span class="sem-pessoas">Ninguém anotado ainda — use o campo abaixo para digitar os nomes.</span>';
+}
+
 function abrirModal(tipo, permitirComum) {
   tipoAtual = tipo;
   document.getElementById('modalTitulo').textContent = `${tipo} — nome de quem pediu`;
   document.getElementById('modalInput').value = '';
   document.getElementById('modalComum').checked = false;
+  document.getElementById('modalComumOpcoes').style.display = 'none';
+  document.querySelector('input[name="modalDivisao"][value="todos"]').checked = true;
+  document.getElementById('modalConsumidores').classList.remove('ativo');
+  document.getElementById('modalOutrasPessoas').style.display = 'none';
+  document.getElementById('modalOutrasPessoas').value = '';
 
   const blocoComum = document.getElementById('modalComum').closest('.modal-comum');
   const dicaComum = document.getElementById('modalDica');
@@ -436,6 +483,19 @@ function abrirModalOutro() {
   }
 }
 
+document.getElementById('modalComum').addEventListener('change', function() {
+  document.getElementById('modalComumOpcoes').style.display = this.checked ? 'block' : 'none';
+  if (this.checked) montarConsumidoresModal();
+});
+
+document.querySelectorAll('input[name="modalDivisao"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+    const selecionados = document.querySelector('input[name="modalDivisao"]:checked').value === 'selecionados';
+    document.getElementById('modalConsumidores').classList.toggle('ativo', selecionados);
+    document.getElementById('modalOutrasPessoas').style.display = selecionados ? '' : 'none';
+  });
+});
+
 document.getElementById('modalCancelar').onclick = () => {
   document.getElementById('modalFundo').classList.remove('ativo');
 };
@@ -454,7 +514,22 @@ function confirmarPedido() {
     return;
   }
 
-  pedidos.push({ tipo: tipoAtual, nome: nome, comum: comum });
+  let compartilhadoPor = 'todos';
+  if (comum) {
+    const modo = document.querySelector('input[name="modalDivisao"]:checked').value;
+    if (modo === 'selecionados') {
+      const marcados = Array.from(document.querySelectorAll('.modal-consumidor-check:checked')).map(c => c.value);
+      const extras = document.getElementById('modalOutrasPessoas').value
+        .split(',').map(s => s.trim()).filter(s => s !== '');
+      compartilhadoPor = Array.from(new Set([...marcados, ...extras]));
+      if (compartilhadoPor.length === 0) {
+        alert('Marque ou digite pelo menos uma pessoa que vai compartilhar, ou escolha "Todos vão compartilhar".');
+        return;
+      }
+    }
+  }
+
+  pedidos.push({ tipo: tipoAtual, nome: nome, comum: comum, compartilhadoPor: comum ? compartilhadoPor : null });
   salvar();
   renderizar();
   document.getElementById('modalFundo').classList.remove('ativo');
@@ -474,9 +549,15 @@ function renderizar() {
     listaDiv.innerHTML = pedidos.map((p, i) => {
       const selo = p.comum ? '<span class="selo-comum">comum</span>' : '';
       const nomeTexto = p.nome ? ` — ${p.nome}` : (p.comum ? ' — (compartilhado)' : '');
+      let compartilhaTexto = '';
+      if (p.comum) {
+        compartilhaTexto = p.compartilhadoPor === 'todos'
+          ? ' <br><small>÷ todos</small>'
+          : ` <br><small>÷ ${p.compartilhadoPor.join(', ')}</small>`;
+      }
       return `
       <div class="pedido-item">
-        <span class="pedido-info"><span class="pedido-tipo">${p.tipo}</span>${selo}${nomeTexto}</span>
+        <span class="pedido-info"><span class="pedido-tipo">${p.tipo}</span>${selo}${nomeTexto}${compartilhaTexto}</span>
         <button class="remover-btn" onclick="removerPedido(${i})">✕</button>
       </div>
     `;
@@ -548,43 +629,22 @@ function montarCamposValores() {
     html += '<div class="valores-subtitulo">Itens comuns (compartilhados)</div>';
     tiposComuns.forEach(tipo => {
       const chave = chaveCampo(tipo);
-      const checkboxesPessoas = pessoas.length > 0
-        ? pessoas.map(nome => `
-            <label><input type="checkbox" class="consumidor-check" data-tipo="${tipo}" value="${nome}"> ${nome}</label>
-          `).join('')
-        : '<span class="sem-pessoas">Nenhuma pessoa com pedido individual anotada ainda.</span>';
+      const instancias = pedidos.filter(p => p.comum && p.tipo === tipo);
+      const detalheDivisao = instancias.map(p =>
+        p.compartilhadoPor === 'todos' ? 'todos' : p.compartilhadoPor.join(', ')
+      ).join(' · ');
 
       html += `
         <div class="valores-campo">
-          <label for="valorComum_${chave}">${tipo} — preço total (R$)</label>
-          <input type="number" id="valorComum_${chave}" step="0.01" min="0" placeholder="Ex: 25.00" data-tipo="${tipo}" class="campo-valor-comum">
-          <div class="divisao-opcoes">
-            <label><input type="radio" name="divisao_${chave}" value="todos" data-tipo="${tipo}" checked> Dividir entre todos</label>
-            <label><input type="radio" name="divisao_${chave}" value="selecionados" data-tipo="${tipo}"> Só quem consumiu</label>
-          </div>
-          <div class="consumidores-lista" id="consumidores_${chave}">
-            ${checkboxesPessoas}
-          </div>
+          <label for="valorComum_${chave}">${tipo} — preço por unidade (R$)</label>
+          <input type="number" id="valorComum_${chave}" step="0.01" min="0" placeholder="Ex: 8.00" data-tipo="${tipo}" class="campo-valor-comum">
+          <div class="modal-dica" style="margin-top:4px;">${instancias.length}x anotado(s) — divisão: ${detalheDivisao}</div>
         </div>
       `;
     });
   }
 
   container.innerHTML = html;
-
-  // Liga os radios para mostrar/esconder a lista de consumidores
-  container.querySelectorAll('input[type="radio"]').forEach(radio => {
-    radio.addEventListener('change', () => {
-      const tipo = radio.dataset.tipo;
-      const chave = chaveCampo(tipo);
-      const lista = document.getElementById('consumidores_' + chave);
-      if (radio.value === 'selecionados' && radio.checked) {
-        lista.classList.add('ativo');
-      } else if (radio.checked) {
-        lista.classList.remove('ativo');
-      }
-    });
-  });
 }
 
 document.getElementById('btnToggleValores').onclick = () => {
@@ -623,64 +683,58 @@ document.getElementById('btnCalcularValores').onclick = () => {
     if (!porPessoa[p.nome]) porPessoa[p.nome] = {};
     porPessoa[p.nome][p.tipo] = (porPessoa[p.nome][p.tipo] || 0) + 1;
   });
-  const pessoas = Array.from(pessoasSet);
 
-  if (pessoas.length === 0) {
+  if (pessoasSet.size === 0) {
     alert('Não há pedidos individuais com nome para calcular o rateio.');
     return;
   }
+
+  // Calcula rateio dos itens comuns, instância por instância
+  const rateioComum = {}; // nome -> valor
+  const detalhesComuns = [];
+
+  const precoComumUnit = {};
+  document.querySelectorAll('.campo-valor-comum').forEach(input => {
+    const v = parseFloat(input.value);
+    if (isNaN(v)) { faltouPreco = true; return; }
+    precoComumUnit[input.dataset.tipo] = v;
+  });
+  if (faltouPreco) {
+    alert('Preencha o preço de todos os itens comuns.');
+    return;
+  }
+
+  pedidos.filter(p => p.comum).forEach(p => {
+    const preco = precoComumUnit[p.tipo];
+    if (preco === undefined || isNaN(preco)) { faltouPreco = true; return; }
+
+    let beneficiarios = (p.compartilhadoPor === 'todos')
+      ? Array.from(pessoasSet)
+      : p.compartilhadoPor;
+
+    if (!beneficiarios || beneficiarios.length === 0) return;
+
+    beneficiarios.forEach(nome => pessoasSet.add(nome));
+    const valorPorPessoa = preco / beneficiarios.length;
+    beneficiarios.forEach(nome => {
+      rateioComum[nome] = (rateioComum[nome] || 0) + valorPorPessoa;
+    });
+    detalhesComuns.push(`${p.tipo}: R$ ${preco.toFixed(2)} ÷ ${beneficiarios.length} pessoa(s)`);
+  });
+
+  if (faltouPreco) return;
+
+  const pessoas = Array.from(pessoasSet);
 
   // Calcula subtotal de itens individuais por pessoa
   const subtotalIndividual = {};
   pessoas.forEach(nome => {
     let subtotal = 0;
-    Object.entries(porPessoa[nome]).forEach(([tipo, qtd]) => {
+    Object.entries(porPessoa[nome] || {}).forEach(([tipo, qtd]) => {
       subtotal += qtd * (precoIndividual[tipo] || 0);
     });
     subtotalIndividual[nome] = subtotal;
   });
-
-  // Calcula rateio dos itens comuns
-  const rateioComum = {}; // nome -> valor
-  pessoas.forEach(nome => rateioComum[nome] = 0);
-  const detalhesComuns = [];
-
-  const tiposComuns = [];
-  pedidos.forEach(p => {
-    if (p.comum && !tiposComuns.includes(p.tipo)) tiposComuns.push(p.tipo);
-  });
-
-  tiposComuns.forEach(tipo => {
-    const chave = chaveCampo(tipo);
-    const inputPreco = document.getElementById('valorComum_' + chave);
-    const preco = parseFloat(inputPreco ? inputPreco.value : NaN);
-    if (isNaN(preco)) {
-      faltouPreco = true;
-      return;
-    }
-    const radioSelecionado = document.querySelector(`input[name="divisao_${chave}"]:checked`);
-    const modo = radioSelecionado ? radioSelecionado.value : 'todos';
-
-    let beneficiarios;
-    if (modo === 'todos') {
-      beneficiarios = pessoas;
-    } else {
-      beneficiarios = Array.from(document.querySelectorAll(`.consumidor-check[data-tipo="${tipo}"]:checked`)).map(c => c.value);
-      if (beneficiarios.length === 0) {
-        alert(`Marque quem consumiu "${tipo}", ou escolha "Dividir entre todos".`);
-        faltouPreco = true;
-        return;
-      }
-    }
-
-    const valorPorPessoa = preco / beneficiarios.length;
-    beneficiarios.forEach(nome => {
-      rateioComum[nome] = (rateioComum[nome] || 0) + valorPorPessoa;
-    });
-    detalhesComuns.push(`${tipo}: R$ ${preco.toFixed(2)} ÷ ${beneficiarios.length} pessoa(s)`);
-  });
-
-  if (faltouPreco) return;
 
   let totalGeral = 0;
   const linhas = pessoas.map(nome => {
@@ -688,7 +742,8 @@ document.getElementById('btnCalcularValores').onclick = () => {
     const subComum = rateioComum[nome] || 0;
     const totalPessoa = subInd + subComum;
     totalGeral += totalPessoa;
-    const qtdItens = Object.values(porPessoa[nome]).reduce((a, b) => a + b, 0);
+    const qtdItens = Object.values(porPessoa[nome] || {}).reduce((a, b) => a + b, 0);
+    const chaveNome = chaveCampo(nome);
     return `
       <tr>
         <td>${nome}</td>
@@ -696,6 +751,7 @@ document.getElementById('btnCalcularValores').onclick = () => {
         <td class="valor">R$ ${subInd.toFixed(2)}</td>
         <td class="valor">R$ ${subComum.toFixed(2)}</td>
         <td class="valor"><strong>R$ ${totalPessoa.toFixed(2)}</strong></td>
+        <td class="pago-col"><input type="checkbox" class="pago-check" id="pago_${chaveNome}" data-nome="${nome}" data-valor="${totalPessoa.toFixed(2)}"></td>
       </tr>
     `;
   }).join('');
@@ -713,6 +769,7 @@ document.getElementById('btnCalcularValores').onclick = () => {
           <th class="valor">Vlr. individual</th>
           <th class="valor">Vlr. comum</th>
           <th class="valor">Total</th>
+          <th class="valor">Pago</th>
         </tr>
       </thead>
       <tbody>
@@ -720,12 +777,43 @@ document.getElementById('btnCalcularValores').onclick = () => {
         <tr class="total-geral">
           <td colspan="4">Total geral</td>
           <td class="valor">R$ ${totalGeral.toFixed(2)}</td>
+          <td></td>
         </tr>
       </tbody>
     </table>
     ${rodape}
+    <div id="statusPagamentos" class="status-pagamentos"></div>
   `;
+
+  document.querySelectorAll('.pago-check').forEach(chk => {
+    chk.addEventListener('change', atualizarStatusPagamentos);
+  });
+  atualizarStatusPagamentos();
 };
+
+function atualizarStatusPagamentos() {
+  const checks = document.querySelectorAll('.pago-check');
+  let pagos = 0, totalPago = 0, totalPendente = 0;
+  checks.forEach(chk => {
+    const valor = parseFloat(chk.dataset.valor) || 0;
+    const linha = chk.closest('tr');
+    if (chk.checked) {
+      pagos++;
+      totalPago += valor;
+      if (linha) linha.classList.add('linha-paga');
+    } else {
+      totalPendente += valor;
+      if (linha) linha.classList.remove('linha-paga');
+    }
+  });
+  const statusDiv = document.getElementById('statusPagamentos');
+  if (statusDiv) {
+    statusDiv.innerHTML = `
+      <strong>${pagos} de ${checks.length}</strong> já pagaram —
+      Pago: R$ ${totalPago.toFixed(2)} · Falta receber: R$ ${totalPendente.toFixed(2)}
+    `;
+  }
+}
 
 document.getElementById('btnImprimir').onclick = () => window.print();
 
