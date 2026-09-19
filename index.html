@@ -11,6 +11,7 @@
     --fundo: #fdf6ec;
     --texto: #3a2c1a;
     --borda: #e0d0b5;
+    --verde: #4a8a4a;
   }
   * { box-sizing: border-box; }
   body {
@@ -21,301 +22,113 @@
     margin: 0 auto;
     padding: 16px;
   }
-  h1 {
-    text-align: center;
-    font-size: 1.6em;
-    margin-bottom: 4px;
-  }
-  .subtitulo {
-    text-align: center;
-    color: #7a6b52;
-    margin-bottom: 20px;
-    font-size: 0.95em;
-  }
-  .opcoes {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-bottom: 20px;
-  }
+  h1 { text-align: center; font-size: 1.6em; margin-bottom: 4px; }
+  .subtitulo { text-align: center; color: #7a6b52; margin-bottom: 20px; font-size: 0.95em; }
+  .opcoes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
   .opcao-btn {
-    background: white;
-    border: 2px solid var(--borda);
-    border-radius: 10px;
-    padding: 12px 6px;
-    font-size: 0.9em;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s;
-    color: var(--texto);
+    background: white; border: 2px solid var(--borda); border-radius: 10px;
+    padding: 12px 6px; font-size: 0.9em; font-weight: 600; cursor: pointer;
+    transition: all 0.15s; color: var(--texto);
   }
-  .opcao-btn:hover, .opcao-btn:active {
-    background: var(--amarelo);
-    border-color: var(--amarelo-escuro);
-    color: white;
-  }
-  .opcao-btn.outro {
-    background: #f0e6d2;
-    border-style: dashed;
-  }
-  .lista-container {
-    background: white;
-    border-radius: 10px;
-    border: 1px solid var(--borda);
-    padding: 12px;
-    margin-bottom: 20px;
-  }
-  .lista-titulo {
-    font-weight: 700;
-    margin-bottom: 8px;
-    font-size: 1.05em;
-  }
-  .pedido-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 6px;
-    border-bottom: 1px solid #f0e6d2;
-  }
+  .opcao-btn:hover, .opcao-btn:active { background: var(--amarelo); border-color: var(--amarelo-escuro); color: white; }
+  .opcao-btn.outro { background: #f0e6d2; border-style: dashed; }
+  .lista-container { background: white; border-radius: 10px; border: 1px solid var(--borda); padding: 12px; margin-bottom: 20px; }
+  .lista-titulo { font-weight: 700; margin-bottom: 8px; font-size: 1.05em; }
+  .pedido-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 6px; border-bottom: 1px solid #f0e6d2; }
   .pedido-item:last-child { border-bottom: none; }
   .pedido-info { font-size: 0.95em; }
   .pedido-tipo { color: var(--amarelo-escuro); font-weight: 700; }
   .selo-comum {
-    display: inline-block;
-    background: #d9ecd9;
-    color: #2f6b2f;
-    font-size: 0.72em;
-    font-weight: 700;
-    padding: 1px 6px;
-    border-radius: 8px;
-    margin-left: 6px;
-    vertical-align: middle;
+    display: inline-block; background: #d9ecd9; color: #2f6b2f; font-size: 0.72em;
+    font-weight: 700; padding: 1px 6px; border-radius: 8px; margin-left: 6px; vertical-align: middle;
   }
-  .remover-btn {
-    background: none;
-    border: none;
-    color: #b04a4a;
-    font-size: 1.1em;
-    cursor: pointer;
-    padding: 2px 8px;
-  }
-  .vazio {
-    color: #a89878;
-    font-style: italic;
-    padding: 8px 0;
-  }
-  .resumo-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 6px 0;
-    border-bottom: 1px dashed #e8dcc0;
-    font-size: 1em;
-  }
+  .remover-btn { background: none; border: none; color: #b04a4a; font-size: 1.1em; cursor: pointer; padding: 2px 8px; }
+  .vazio { color: #a89878; font-style: italic; padding: 8px 0; }
+  .resumo-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #e8dcc0; font-size: 1em; }
   .resumo-item:last-child { border-bottom: none; }
-  .resumo-total {
-    display: flex;
-    justify-content: space-between;
-    font-weight: 700;
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 2px solid var(--amarelo);
-  }
-  .acoes {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  .acoes button {
-    flex: 1;
-    padding: 12px;
-    border-radius: 8px;
-    border: none;
-    font-size: 1em;
-    font-weight: 700;
-    cursor: pointer;
-  }
+  .resumo-total { display: flex; justify-content: space-between; font-weight: 700; margin-top: 10px; padding-top: 10px; border-top: 2px solid var(--amarelo); }
+  .acoes { display: flex; gap: 10px; margin-bottom: 20px; }
+  .acoes button { flex: 1; padding: 12px; border-radius: 8px; border: none; font-size: 1em; font-weight: 700; cursor: pointer; }
   #btnImprimir { background: var(--amarelo); color: white; }
   #btnLimpar { background: #e8e0d0; color: var(--texto); }
 
-  /* Modal para digitar nome */
+  #btnSalvarPedido {
+    background: var(--verde); color: white; border: none; width: 100%;
+    padding: 13px; border-radius: 10px; font-size: 1em; font-weight: 700;
+    cursor: pointer; margin-bottom: 20px;
+  }
+
   .modal-fundo {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.5);
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
+    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 10;
   }
   .modal-fundo.ativo { display: flex; }
-  .modal-caixa {
-    background: white;
-    border-radius: 12px;
-    padding: 20px;
-    width: 85%;
-    max-width: 340px;
-  }
+  .modal-caixa { background: white; border-radius: 12px; padding: 20px; width: 85%; max-width: 340px; max-height: 85vh; overflow-y: auto; }
   .modal-caixa h3 { margin-top: 0; }
   .modal-caixa input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    font-size: 1em;
-    border: 1px solid var(--borda);
-    border-radius: 6px;
-    margin: 10px 0;
+    width: 100%; padding: 10px; font-size: 1em; border: 1px solid var(--borda); border-radius: 6px; margin: 10px 0;
   }
-  .modal-comum {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #f7f0e0;
-    padding: 8px 10px;
-    border-radius: 6px;
-    margin-bottom: 6px;
-    font-size: 0.9em;
-  }
+  .modal-comum { display: flex; align-items: center; gap: 8px; background: #f7f0e0; padding: 8px 10px; border-radius: 6px; margin-bottom: 6px; font-size: 0.9em; }
   .modal-comum input { width: auto; }
-  .modal-dica {
-    font-size: 0.8em;
-    color: #8a7a5c;
-    margin: -4px 0 8px 0;
-  }
+  .modal-dica { font-size: 0.8em; color: #8a7a5c; margin: -4px 0 8px 0; }
   .modal-botoes { display: flex; gap: 10px; }
-  .modal-botoes button {
-    flex: 1;
-    padding: 10px;
-    border-radius: 6px;
-    border: none;
-    font-weight: 700;
-    cursor: pointer;
-  }
+  .modal-botoes button { flex: 1; padding: 10px; border-radius: 6px; border: none; font-weight: 700; cursor: pointer; }
   #modalConfirmar { background: var(--amarelo); color: white; }
   #modalCancelar { background: #eee; color: #555; }
 
-  .valores-toggle {
-    background: none;
-    border: 1px dashed var(--amarelo-escuro);
-    color: var(--amarelo-escuro);
-    padding: 10px;
-    width: 100%;
-    border-radius: 8px;
-    font-weight: 700;
-    cursor: pointer;
-    margin-bottom: 20px;
+  .valores-toggle, .historico-toggle {
+    background: none; border: 1px dashed var(--amarelo-escuro); color: var(--amarelo-escuro);
+    padding: 10px; width: 100%; border-radius: 8px; font-weight: 700; cursor: pointer; margin-bottom: 12px;
   }
-  .valores-secao {
-    display: none;
-    background: white;
-    border: 1px solid var(--borda);
-    border-radius: 10px;
-    padding: 14px;
-    margin-bottom: 20px;
+  .valores-secao, .historico-secao {
+    display: none; background: white; border: 1px solid var(--borda); border-radius: 10px; padding: 14px; margin-bottom: 20px;
   }
-  .valores-secao.ativo { display: block; }
+  .valores-secao.ativo, .historico-secao.ativo { display: block; }
   .valores-subtitulo {
-    font-weight: 700;
-    margin: 14px 0 8px 0;
-    padding-top: 10px;
-    border-top: 1px solid #f0e6d2;
-    font-size: 0.95em;
-    color: var(--amarelo-escuro);
+    font-weight: 700; margin: 14px 0 8px 0; padding-top: 10px; border-top: 1px solid #f0e6d2;
+    font-size: 0.95em; color: var(--amarelo-escuro);
   }
   .valores-subtitulo:first-child { border-top: none; padding-top: 0; margin-top: 0; }
-  .valores-campo {
-    margin-bottom: 12px;
-  }
-  .valores-campo label {
-    display: block;
-    font-size: 0.9em;
-    margin-bottom: 4px;
-    font-weight: 600;
-  }
-  .valores-campo input[type="number"] {
-    width: 100%;
-    padding: 9px;
-    border: 1px solid var(--borda);
-    border-radius: 6px;
-    font-size: 1em;
-  }
-  .divisao-opcoes {
-    display: flex;
-    gap: 14px;
-    font-size: 0.88em;
-    margin: 6px 0;
-  }
+  .valores-campo { margin-bottom: 12px; }
+  .valores-campo label { display: block; font-size: 0.9em; margin-bottom: 4px; font-weight: 600; }
+  .valores-campo input[type="number"] { width: 100%; padding: 9px; border: 1px solid var(--borda); border-radius: 6px; font-size: 1em; }
+  .divisao-opcoes { display: flex; gap: 14px; font-size: 0.88em; margin: 6px 0; flex-wrap: wrap; }
   .divisao-opcoes label { font-weight: 400; display: flex; align-items: center; gap: 4px; }
   .consumidores-lista {
-    display: none;
-    flex-wrap: wrap;
-    gap: 6px 14px;
-    background: #faf5e8;
-    border-radius: 6px;
-    padding: 8px 10px;
-    margin-top: 4px;
+    display: none; flex-wrap: wrap; gap: 6px 14px; background: #faf5e8; border-radius: 6px; padding: 8px 10px; margin-top: 4px;
   }
   .consumidores-lista.ativo { display: flex; }
-  .consumidores-lista label {
-    font-size: 0.85em;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-weight: 400;
-  }
-  .sem-pessoas {
-    font-size: 0.8em;
-    color: #a89878;
-    font-style: italic;
-  }
+  .consumidores-lista label { font-size: 0.85em; display: flex; align-items: center; gap: 4px; font-weight: 400; }
+  .sem-pessoas { font-size: 0.8em; color: #a89878; font-style: italic; }
   #btnCalcularValores {
-    background: var(--amarelo-escuro);
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 8px;
-    font-weight: 700;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 4px;
+    background: var(--amarelo-escuro); color: white; border: none; padding: 10px; border-radius: 8px;
+    font-weight: 700; cursor: pointer; width: 100%; margin-top: 4px;
   }
-  .tabela-pagamento {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 14px;
-    font-size: 0.9em;
-  }
-  .tabela-pagamento th, .tabela-pagamento td {
-    text-align: left;
-    padding: 7px 4px;
-    border-bottom: 1px solid #eee0c8;
-  }
+  .tabela-pagamento { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 0.9em; }
+  .tabela-pagamento th, .tabela-pagamento td { text-align: left; padding: 7px 4px; border-bottom: 1px solid #eee0c8; }
   .tabela-pagamento th { color: #7a6b52; }
   .tabela-pagamento td.valor, .tabela-pagamento th.valor { text-align: right; }
-  .tabela-pagamento tr.total-geral td {
-    font-weight: 700;
-    border-top: 2px solid var(--amarelo);
-    border-bottom: none;
-  }
+  .tabela-pagamento tr.total-geral td { font-weight: 700; border-top: 2px solid var(--amarelo); border-bottom: none; }
   .pago-col { text-align: center !important; }
-  .pago-check {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
+  .pago-check { width: 20px; height: 20px; cursor: pointer; }
+  tr.linha-paga td { background: #eaf5ea; color: #4a7a4a; }
+  .status-pagamentos { margin-top: 12px; padding: 10px; background: #faf5e8; border-radius: 8px; font-size: 0.9em; text-align: center; }
+
+  .rodada-card { border: 1px solid var(--borda); border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
+  .rodada-cabecalho {
+    display: flex; justify-content: space-between; align-items: center; padding: 12px;
+    background: #faf5e8; cursor: pointer; gap: 8px;
   }
-  tr.linha-paga td {
-    background: #eaf5ea;
-    color: #4a7a4a;
-  }
-  .status-pagamentos {
-    margin-top: 12px;
-    padding: 10px;
-    background: #faf5e8;
-    border-radius: 8px;
-    font-size: 0.9em;
-    text-align: center;
-  }
+  .rodada-cabecalho-info { font-size: 0.92em; }
+  .rodada-data { font-weight: 700; color: var(--amarelo-escuro); }
+  .rodada-status { font-size: 0.85em; color: #6a5c42; margin-top: 2px; }
+  .rodada-corpo { display: none; padding: 12px; }
+  .rodada-corpo.ativo { display: block; }
+  .rodada-excluir { background: none; border: none; color: #b04a4a; font-size: 1.3em; cursor: pointer; padding: 2px 6px; }
+  .rodada-item-lista { font-size: 0.85em; color: #6a5c42; margin-bottom: 10px; line-height: 1.5; }
 
   @media print {
-    .opcoes, .acoes, .modal-fundo, .valores-toggle { display: none !important; }
+    .opcoes, .acoes, .modal-fundo, .valores-toggle, .historico-toggle, .historico-secao, #btnSalvarPedido { display: none !important; }
     .valores-secao.ativo { border: none; padding: 0; }
     .valores-campo, .divisao-opcoes, .consumidores-lista, #btnCalcularValores { display: none !important; }
     body { max-width: 100%; }
@@ -330,7 +143,7 @@
 <div class="opcoes" id="opcoes"></div>
 
 <div class="lista-container">
-  <div class="lista-titulo">Pedidos anotados</div>
+  <div class="lista-titulo">Pedidos anotados (rodada atual)</div>
   <div id="listaPedidos"><div class="vazio">Nenhum pedido ainda.</div></div>
 </div>
 
@@ -347,9 +160,16 @@
   <div id="resultadoPagamento"></div>
 </div>
 
+<button id="btnSalvarPedido">💾 Finalizar e salvar este pedido (com data)</button>
+
 <div class="acoes">
   <button id="btnImprimir">🖨️ Imprimir / Enviar</button>
-  <button id="btnLimpar">🗑️ Limpar tudo</button>
+  <button id="btnLimpar">🗑️ Limpar rodada atual</button>
+</div>
+
+<button class="historico-toggle" id="btnToggleHistorico">📋 Histórico de pedidos salvos</button>
+<div class="historico-secao" id="historicoSecao">
+  <div id="listaHistorico"><div class="vazio">Nenhum pedido salvo ainda.</div></div>
 </div>
 
 <!-- Modal -->
@@ -386,40 +206,36 @@ const TIPOS = [
   "Pão de queijo", "Salgado", "Assado", "Quibe", "Bacalhau"
 ];
 
-// Armazenamento seguro: tenta usar localStorage, mas nunca trava o app
-// se o navegador/visualizador bloquear (ex: preview do WhatsApp, arquivo local, etc)
+/* ---------- Armazenamento seguro ---------- */
 const storageDisponivel = (() => {
   try {
-    const teste = '__teste__';
-    localStorage.setItem(teste, teste);
-    localStorage.removeItem(teste);
+    const t = '__teste__';
+    localStorage.setItem(t, t);
+    localStorage.removeItem(t);
     return true;
-  } catch (e) {
-    return false;
-  }
+  } catch (e) { return false; }
 })();
 
-function carregarPedidos() {
-  if (!storageDisponivel) return [];
-  try {
-    return JSON.parse(localStorage.getItem('pedidosPasteis') || '[]');
-  } catch (e) {
-    return [];
-  }
+function lerLS(chave, padrao) {
+  if (!storageDisponivel) return padrao;
+  try { return JSON.parse(localStorage.getItem(chave) || JSON.stringify(padrao)); }
+  catch (e) { return padrao; }
 }
-
-let pedidos = carregarPedidos();
-let tipoAtual = null;
-
-function salvar() {
+function gravarLS(chave, valor) {
   if (!storageDisponivel) return;
-  try {
-    localStorage.setItem('pedidosPasteis', JSON.stringify(pedidos));
-  } catch (e) {
-    // se falhar, o app continua funcionando só sem salvar entre sessões
-  }
+  try { localStorage.setItem(chave, JSON.stringify(valor)); } catch (e) {}
 }
 
+let pedidos = lerLS('pedidosPasteis', []);
+let historico = lerLS('pedidosHistorico', []);
+let tipoAtual = null;
+let pagamentosAtual = {};       // checklist de pagamento da rodada atual (não salva ainda)
+let ultimoCalculo = null;       // {precoIndividual, precoComum} da última vez que "Calcular" rodou com sucesso
+
+function salvar() { gravarLS('pedidosPasteis', pedidos); }
+function salvarHistorico() { gravarLS('pedidosHistorico', historico); }
+
+/* ---------- Botões de opções ---------- */
 function montarOpcoes() {
   const container = document.getElementById('opcoes');
   container.innerHTML = '';
@@ -437,6 +253,7 @@ function montarOpcoes() {
   container.appendChild(btnOutro);
 }
 
+/* ---------- Modal ---------- */
 function nomesConhecidos() {
   const set = new Set();
   pedidos.forEach(p => { if (p.nome) set.add(p.nome); });
@@ -464,13 +281,8 @@ function abrirModal(tipo, permitirComum) {
 
   const blocoComum = document.getElementById('modalComum').closest('.modal-comum');
   const dicaComum = document.getElementById('modalDica');
-  if (permitirComum) {
-    blocoComum.style.display = '';
-    dicaComum.style.display = '';
-  } else {
-    blocoComum.style.display = 'none';
-    dicaComum.style.display = 'none';
-  }
+  if (permitirComum) { blocoComum.style.display = ''; dicaComum.style.display = ''; }
+  else { blocoComum.style.display = 'none'; dicaComum.style.display = 'none'; }
 
   document.getElementById('modalFundo').classList.add('ativo');
   setTimeout(() => document.getElementById('modalInput').focus(), 50);
@@ -478,9 +290,7 @@ function abrirModal(tipo, permitirComum) {
 
 function abrirModalOutro() {
   const outro = prompt('Digite o nome do item (ex: doce de banana, água...):');
-  if (outro && outro.trim() !== '') {
-    abrirModal(outro.trim(), true);
-  }
+  if (outro && outro.trim() !== '') abrirModal(outro.trim(), true);
 }
 
 document.getElementById('modalComum').addEventListener('change', function() {
@@ -496,31 +306,22 @@ document.querySelectorAll('input[name="modalDivisao"]').forEach(radio => {
   });
 });
 
-document.getElementById('modalCancelar').onclick = () => {
-  document.getElementById('modalFundo').classList.remove('ativo');
-};
-
+document.getElementById('modalCancelar').onclick = () => document.getElementById('modalFundo').classList.remove('ativo');
 document.getElementById('modalConfirmar').onclick = confirmarPedido;
-document.getElementById('modalInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') confirmarPedido();
-});
+document.getElementById('modalInput').addEventListener('keydown', e => { if (e.key === 'Enter') confirmarPedido(); });
 
 function confirmarPedido() {
   const nome = document.getElementById('modalInput').value.trim();
   const comum = document.getElementById('modalComum').checked;
 
-  if (!comum && nome === '') {
-    alert('Digite o nome de quem pediu.');
-    return;
-  }
+  if (!comum && nome === '') { alert('Digite o nome de quem pediu.'); return; }
 
   let compartilhadoPor = 'todos';
   if (comum) {
     const modo = document.querySelector('input[name="modalDivisao"]:checked').value;
     if (modo === 'selecionados') {
       const marcados = Array.from(document.querySelectorAll('.modal-consumidor-check:checked')).map(c => c.value);
-      const extras = document.getElementById('modalOutrasPessoas').value
-        .split(',').map(s => s.trim()).filter(s => s !== '');
+      const extras = document.getElementById('modalOutrasPessoas').value.split(',').map(s => s.trim()).filter(s => s !== '');
       compartilhadoPor = Array.from(new Set([...marcados, ...extras]));
       if (compartilhadoPor.length === 0) {
         alert('Marque ou digite pelo menos uma pessoa que vai compartilhar, ou escolha "Todos vão compartilhar".');
@@ -541,6 +342,7 @@ function removerPedido(index) {
   renderizar();
 }
 
+/* ---------- Renderização da rodada atual ---------- */
 function renderizar() {
   const listaDiv = document.getElementById('listaPedidos');
   if (pedidos.length === 0) {
@@ -559,8 +361,7 @@ function renderizar() {
       <div class="pedido-item">
         <span class="pedido-info"><span class="pedido-tipo">${p.tipo}</span>${selo}${nomeTexto}${compartilhaTexto}</span>
         <button class="remover-btn" onclick="removerPedido(${i})">✕</button>
-      </div>
-    `;
+      </div>`;
     }).join('');
   }
 
@@ -569,59 +370,36 @@ function renderizar() {
     resumoDiv.innerHTML = '<div class="vazio">Sem pedidos para resumir.</div>';
   } else {
     const contagem = {};
-    pedidos.forEach(p => {
-      contagem[p.tipo] = (contagem[p.tipo] || 0) + 1;
-    });
-    const linhas = Object.entries(contagem)
-      .sort((a, b) => b[1] - a[1])
-      .map(([tipo, qtd]) => `
-        <div class="resumo-item"><span>${tipo}</span><span>${qtd}</span></div>
-      `).join('');
-    resumoDiv.innerHTML = linhas + `
-      <div class="resumo-total"><span>TOTAL</span><span>${pedidos.length}</span></div>
-    `;
+    pedidos.forEach(p => { contagem[p.tipo] = (contagem[p.tipo] || 0) + 1; });
+    const linhas = Object.entries(contagem).sort((a, b) => b[1] - a[1])
+      .map(([tipo, qtd]) => `<div class="resumo-item"><span>${tipo}</span><span>${qtd}</span></div>`).join('');
+    resumoDiv.innerHTML = linhas + `<div class="resumo-total"><span>TOTAL</span><span>${pedidos.length}</span></div>`;
   }
 }
 
-function chaveCampo(tipo) {
-  return tipo.replace(/[^a-zA-Z0-9]/g, '_');
-}
+function chaveCampo(tipo) { return tipo.replace(/[^a-zA-Z0-9]/g, '_'); }
 
+/* ---------- Campos de preço (rodada atual) ---------- */
 function montarCamposValores() {
   const container = document.getElementById('camposValores');
+  if (pedidos.length === 0) { container.innerHTML = '<div class="vazio">Anote os pedidos primeiro.</div>'; return; }
 
-  if (pedidos.length === 0) {
-    container.innerHTML = '<div class="vazio">Anote os pedidos primeiro.</div>';
-    return;
-  }
-
-  // Descobre tipos individuais e tipos comuns (baseado no que já foi anotado)
   const tiposIndividuais = [];
   const tiposComuns = [];
-  const pessoasSet = new Set();
-
   pedidos.forEach(p => {
-    if (p.comum) {
-      if (!tiposComuns.includes(p.tipo)) tiposComuns.push(p.tipo);
-    } else {
-      if (!tiposIndividuais.includes(p.tipo)) tiposIndividuais.push(p.tipo);
-      if (p.nome) pessoasSet.add(p.nome);
-    }
+    if (p.comum) { if (!tiposComuns.includes(p.tipo)) tiposComuns.push(p.tipo); }
+    else { if (!tiposIndividuais.includes(p.tipo)) tiposIndividuais.push(p.tipo); }
   });
-  const pessoas = Array.from(pessoasSet);
 
   let html = '';
-
   if (tiposIndividuais.length > 0) {
     html += '<div class="valores-subtitulo">Preço de cada item individual</div>';
     tiposIndividuais.forEach(tipo => {
       const chave = chaveCampo(tipo);
-      html += `
-        <div class="valores-campo">
+      html += `<div class="valores-campo">
           <label for="valorItem_${chave}">${tipo} (R$ por unidade)</label>
           <input type="number" id="valorItem_${chave}" step="0.01" min="0" placeholder="Ex: 12.00" data-tipo="${tipo}" class="campo-valor-individual">
-        </div>
-      `;
+        </div>`;
     });
   }
 
@@ -630,203 +408,300 @@ function montarCamposValores() {
     tiposComuns.forEach(tipo => {
       const chave = chaveCampo(tipo);
       const instancias = pedidos.filter(p => p.comum && p.tipo === tipo);
-      const detalheDivisao = instancias.map(p =>
-        p.compartilhadoPor === 'todos' ? 'todos' : p.compartilhadoPor.join(', ')
-      ).join(' · ');
-
-      html += `
-        <div class="valores-campo">
+      const detalheDivisao = instancias.map(p => p.compartilhadoPor === 'todos' ? 'todos' : p.compartilhadoPor.join(', ')).join(' · ');
+      html += `<div class="valores-campo">
           <label for="valorComum_${chave}">${tipo} — preço por unidade (R$)</label>
           <input type="number" id="valorComum_${chave}" step="0.01" min="0" placeholder="Ex: 8.00" data-tipo="${tipo}" class="campo-valor-comum">
           <div class="modal-dica" style="margin-top:4px;">${instancias.length}x anotado(s) — divisão: ${detalheDivisao}</div>
-        </div>
-      `;
+        </div>`;
     });
   }
-
   container.innerHTML = html;
 }
 
 document.getElementById('btnToggleValores').onclick = () => {
   const secao = document.getElementById('valoresSecao');
   secao.classList.toggle('ativo');
-  if (secao.classList.contains('ativo')) {
-    montarCamposValores();
-  }
+  if (secao.classList.contains('ativo')) montarCamposValores();
 };
 
-document.getElementById('btnCalcularValores').onclick = () => {
-  if (pedidos.length === 0) {
-    alert('Anote os pedidos primeiro.');
-    return;
-  }
-
-  // Junta preços dos itens individuais
-  const precoIndividual = {};
-  let faltouPreco = false;
-  document.querySelectorAll('.campo-valor-individual').forEach(input => {
-    const v = parseFloat(input.value);
-    if (isNaN(v)) { faltouPreco = true; return; }
-    precoIndividual[input.dataset.tipo] = v;
-  });
-  if (faltouPreco) {
-    alert('Preencha o preço de todos os itens individuais.');
-    return;
-  }
-
-  // Agrupa pedidos individuais por pessoa
-  const porPessoa = {}; // nome -> { tipo: qtd, ... }
+/* ---------- Motor de cálculo (reutilizável para rodada atual e histórico) ---------- */
+function calcularDetalhes(pedidosArr, precoIndividual, precoComum) {
+  const porPessoa = {};
   const pessoasSet = new Set();
-  pedidos.forEach(p => {
+  pedidosArr.forEach(p => {
     if (p.comum || !p.nome) return;
     pessoasSet.add(p.nome);
     if (!porPessoa[p.nome]) porPessoa[p.nome] = {};
     porPessoa[p.nome][p.tipo] = (porPessoa[p.nome][p.tipo] || 0) + 1;
   });
+  if (pessoasSet.size === 0) return { erro: 'Não há pedidos individuais com nome para calcular o rateio.' };
 
-  if (pessoasSet.size === 0) {
-    alert('Não há pedidos individuais com nome para calcular o rateio.');
-    return;
-  }
-
-  // Calcula rateio dos itens comuns, instância por instância
-  const rateioComum = {}; // nome -> valor
-  const detalhesComuns = [];
-
-  const precoComumUnit = {};
-  document.querySelectorAll('.campo-valor-comum').forEach(input => {
-    const v = parseFloat(input.value);
-    if (isNaN(v)) { faltouPreco = true; return; }
-    precoComumUnit[input.dataset.tipo] = v;
+  let erro = null;
+  pedidosArr.forEach(p => {
+    if (!p.comum && (precoIndividual[p.tipo] === undefined || isNaN(precoIndividual[p.tipo]))) {
+      erro = `Falta o preço de "${p.tipo}".`;
+    }
   });
-  if (faltouPreco) {
-    alert('Preencha o preço de todos os itens comuns.');
-    return;
-  }
+  if (erro) return { erro };
 
-  pedidos.filter(p => p.comum).forEach(p => {
-    const preco = precoComumUnit[p.tipo];
-    if (preco === undefined || isNaN(preco)) { faltouPreco = true; return; }
-
-    let beneficiarios = (p.compartilhadoPor === 'todos')
-      ? Array.from(pessoasSet)
-      : p.compartilhadoPor;
-
+  const rateioComum = {};
+  const detalhesComuns = [];
+  pedidosArr.filter(p => p.comum).forEach(p => {
+    const preco = precoComum[p.tipo];
+    if (preco === undefined || isNaN(preco)) { erro = `Falta o preço de "${p.tipo}".`; return; }
+    let beneficiarios = (p.compartilhadoPor === 'todos') ? Array.from(pessoasSet) : p.compartilhadoPor;
     if (!beneficiarios || beneficiarios.length === 0) return;
-
-    beneficiarios.forEach(nome => pessoasSet.add(nome));
+    beneficiarios.forEach(n => pessoasSet.add(n));
     const valorPorPessoa = preco / beneficiarios.length;
-    beneficiarios.forEach(nome => {
-      rateioComum[nome] = (rateioComum[nome] || 0) + valorPorPessoa;
-    });
+    beneficiarios.forEach(n => { rateioComum[n] = (rateioComum[n] || 0) + valorPorPessoa; });
     detalhesComuns.push(`${p.tipo}: R$ ${preco.toFixed(2)} ÷ ${beneficiarios.length} pessoa(s)`);
   });
-
-  if (faltouPreco) return;
+  if (erro) return { erro };
 
   const pessoas = Array.from(pessoasSet);
-
-  // Calcula subtotal de itens individuais por pessoa
-  const subtotalIndividual = {};
-  pessoas.forEach(nome => {
-    let subtotal = 0;
-    Object.entries(porPessoa[nome] || {}).forEach(([tipo, qtd]) => {
-      subtotal += qtd * (precoIndividual[tipo] || 0);
-    });
-    subtotalIndividual[nome] = subtotal;
-  });
-
   let totalGeral = 0;
-  const linhas = pessoas.map(nome => {
-    const subInd = subtotalIndividual[nome] || 0;
+  const resultado = pessoas.map(nome => {
+    const subInd = Object.entries(porPessoa[nome] || {}).reduce((s, [tipo, qtd]) => s + qtd * (precoIndividual[tipo] || 0), 0);
     const subComum = rateioComum[nome] || 0;
-    const totalPessoa = subInd + subComum;
-    totalGeral += totalPessoa;
+    const total = subInd + subComum;
+    totalGeral += total;
     const qtdItens = Object.values(porPessoa[nome] || {}).reduce((a, b) => a + b, 0);
-    const chaveNome = chaveCampo(nome);
-    return `
-      <tr>
-        <td>${nome}</td>
-        <td class="valor">${qtdItens}</td>
-        <td class="valor">R$ ${subInd.toFixed(2)}</td>
-        <td class="valor">R$ ${subComum.toFixed(2)}</td>
-        <td class="valor"><strong>R$ ${totalPessoa.toFixed(2)}</strong></td>
-        <td class="pago-col"><input type="checkbox" class="pago-check" id="pago_${chaveNome}" data-nome="${nome}" data-valor="${totalPessoa.toFixed(2)}"></td>
-      </tr>
-    `;
+    return { nome, qtdItens, subInd, subComum, total };
+  });
+  return { pessoas: resultado, totalGeral, detalhesComuns };
+}
+
+/* ---------- Tabela de pagamento (reutilizável) ---------- */
+function criarTabelaPagamento(resultado, pagamentosMap, aoAlterar) {
+  const div = document.createElement('div');
+  const linhas = resultado.pessoas.map(r => {
+    const checked = pagamentosMap[r.nome] ? 'checked' : '';
+    return `<tr>
+        <td>${r.nome}</td>
+        <td class="valor">${r.qtdItens}</td>
+        <td class="valor">R$ ${r.subInd.toFixed(2)}</td>
+        <td class="valor">R$ ${r.subComum.toFixed(2)}</td>
+        <td class="valor"><strong>R$ ${r.total.toFixed(2)}</strong></td>
+        <td class="pago-col"><input type="checkbox" class="pago-check" data-nome="${r.nome}" data-valor="${r.total.toFixed(2)}" ${checked}></td>
+      </tr>`;
   }).join('');
+  const rodape = (resultado.detalhesComuns && resultado.detalhesComuns.length > 0)
+    ? `<div style="font-size:0.82em; color:#8a7a5c; margin-top:8px;">${resultado.detalhesComuns.join(' · ')}</div>` : '';
 
-  const rodape = detalhesComuns.length > 0
-    ? `<div style="font-size:0.82em; color:#8a7a5c; margin-top:8px;">${detalhesComuns.join(' · ')}</div>`
-    : '';
-
-  document.getElementById('resultadoPagamento').innerHTML = `
+  div.innerHTML = `
     <table class="tabela-pagamento">
-      <thead>
-        <tr>
-          <th>Nome</th>
-          <th class="valor">Itens</th>
-          <th class="valor">Vlr. individual</th>
-          <th class="valor">Vlr. comum</th>
-          <th class="valor">Total</th>
-          <th class="valor">Pago</th>
-        </tr>
-      </thead>
+      <thead><tr>
+        <th>Nome</th><th class="valor">Itens</th><th class="valor">Vlr. individual</th>
+        <th class="valor">Vlr. comum</th><th class="valor">Total</th><th class="valor">Pago</th>
+      </tr></thead>
       <tbody>
         ${linhas}
-        <tr class="total-geral">
-          <td colspan="4">Total geral</td>
-          <td class="valor">R$ ${totalGeral.toFixed(2)}</td>
-          <td></td>
-        </tr>
+        <tr class="total-geral"><td colspan="4">Total geral</td><td class="valor">R$ ${resultado.totalGeral.toFixed(2)}</td><td></td></tr>
       </tbody>
     </table>
     ${rodape}
-    <div id="statusPagamentos" class="status-pagamentos"></div>
+    <div class="status-pagamentos"></div>
   `;
 
-  document.querySelectorAll('.pago-check').forEach(chk => {
-    chk.addEventListener('change', atualizarStatusPagamentos);
+  function atualizarStatus() {
+    const checks = div.querySelectorAll('.pago-check');
+    let pagos = 0, totalPago = 0, totalPendente = 0;
+    checks.forEach(chk => {
+      const valor = parseFloat(chk.dataset.valor) || 0;
+      const linha = chk.closest('tr');
+      if (chk.checked) { pagos++; totalPago += valor; if (linha) linha.classList.add('linha-paga'); }
+      else { totalPendente += valor; if (linha) linha.classList.remove('linha-paga'); }
+    });
+    const statusDiv = div.querySelector('.status-pagamentos');
+    if (statusDiv) statusDiv.innerHTML = `<strong>${pagos} de ${checks.length}</strong> já pagaram — Pago: R$ ${totalPago.toFixed(2)} · Falta receber: R$ ${totalPendente.toFixed(2)}`;
+  }
+
+  div.querySelectorAll('.pago-check').forEach(chk => {
+    chk.addEventListener('change', () => {
+      pagamentosMap[chk.dataset.nome] = chk.checked;
+      atualizarStatus();
+      if (aoAlterar) aoAlterar();
+    });
   });
-  atualizarStatusPagamentos();
+  atualizarStatus();
+  return div;
+}
+
+/* ---------- Calcular (rodada atual) ---------- */
+document.getElementById('btnCalcularValores').onclick = () => {
+  if (pedidos.length === 0) { alert('Anote os pedidos primeiro.'); return; }
+
+  const precoIndividual = {};
+  document.querySelectorAll('.campo-valor-individual').forEach(input => {
+    precoIndividual[input.dataset.tipo] = parseFloat(input.value);
+  });
+  const precoComum = {};
+  document.querySelectorAll('.campo-valor-comum').forEach(input => {
+    precoComum[input.dataset.tipo] = parseFloat(input.value);
+  });
+
+  const resultado = calcularDetalhes(pedidos, precoIndividual, precoComum);
+  if (resultado.erro) { alert(resultado.erro); return; }
+
+  pagamentosAtual = {};
+  ultimoCalculo = { precoIndividual, precoComum };
+
+  const container = document.getElementById('resultadoPagamento');
+  container.innerHTML = '';
+  container.appendChild(criarTabelaPagamento(resultado, pagamentosAtual, null));
 };
 
-function atualizarStatusPagamentos() {
-  const checks = document.querySelectorAll('.pago-check');
-  let pagos = 0, totalPago = 0, totalPendente = 0;
-  checks.forEach(chk => {
-    const valor = parseFloat(chk.dataset.valor) || 0;
-    const linha = chk.closest('tr');
-    if (chk.checked) {
-      pagos++;
-      totalPago += valor;
-      if (linha) linha.classList.add('linha-paga');
-    } else {
-      totalPendente += valor;
-      if (linha) linha.classList.remove('linha-paga');
-    }
-  });
-  const statusDiv = document.getElementById('statusPagamentos');
-  if (statusDiv) {
-    statusDiv.innerHTML = `
-      <strong>${pagos} de ${checks.length}</strong> já pagaram —
-      Pago: R$ ${totalPago.toFixed(2)} · Falta receber: R$ ${totalPendente.toFixed(2)}
-    `;
+/* ---------- Finalizar e salvar pedido ---------- */
+document.getElementById('btnSalvarPedido').onclick = () => {
+  if (pedidos.length === 0) { alert('Não há pedidos para salvar.'); return; }
+  if (!ultimoCalculo) { alert('Calcule os valores (botão "Calcular quanto cada um paga") antes de salvar o pedido.'); return; }
+
+  const agora = new Date();
+  const dataTexto = agora.toLocaleDateString('pt-BR') + ' ' + agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+  if (!confirm(`Salvar este pedido com a data de ${dataTexto}?\n\nA rodada atual será limpa para você começar um novo pedido. O pedido salvo continua disponível no Histórico, com o checklist de pagamento.`)) return;
+
+  const rodada = {
+    id: Date.now().toString(),
+    dataCriacao: dataTexto,
+    pedidos: JSON.parse(JSON.stringify(pedidos)),
+    precoIndividual: { ...ultimoCalculo.precoIndividual },
+    precoComum: { ...ultimoCalculo.precoComum },
+    pagamentos: { ...pagamentosAtual }
+  };
+  historico.unshift(rodada);
+  salvarHistorico();
+
+  pedidos = [];
+  salvar();
+  pagamentosAtual = {};
+  ultimoCalculo = null;
+  document.getElementById('resultadoPagamento').innerHTML = '';
+  document.getElementById('valoresSecao').classList.remove('ativo');
+  renderizar();
+  renderizarHistorico();
+
+  alert('Pedido salvo! Você já pode começar um novo pedido.');
+};
+
+/* ---------- Histórico ---------- */
+document.getElementById('btnToggleHistorico').onclick = () => {
+  document.getElementById('historicoSecao').classList.toggle('ativo');
+  renderizarHistorico();
+};
+
+function excluirRodada(id) {
+  if (!confirm('Excluir este pedido salvo e seu histórico de pagamento? Essa ação não pode ser desfeita.')) return;
+  historico = historico.filter(r => r.id !== id);
+  salvarHistorico();
+  renderizarHistorico();
+}
+
+function alternarRodada(id) {
+  const corpo = document.getElementById('corpo_' + id);
+  if (!corpo) return;
+  corpo.classList.toggle('ativo');
+  if (corpo.classList.contains('ativo') && !corpo.dataset.montado) {
+    montarCorpoRodada(id);
+    corpo.dataset.montado = '1';
   }
 }
 
+function montarCorpoRodada(id) {
+  const rodada = historico.find(r => r.id === id);
+  if (!rodada) return;
+  const corpo = document.getElementById('corpo_' + id);
+
+  const listaTexto = rodada.pedidos.map(p => {
+    const selo = p.comum ? ' (comum)' : '';
+    const nomeTxt = p.nome ? ` — ${p.nome}` : '';
+    return `${p.tipo}${selo}${nomeTxt}`;
+  }).join(' · ');
+
+  const resultado = calcularDetalhes(rodada.pedidos, rodada.precoIndividual, rodada.precoComum);
+
+  corpo.innerHTML = '';
+  const divItens = document.createElement('div');
+  divItens.className = 'rodada-item-lista';
+  divItens.textContent = listaTexto;
+  corpo.appendChild(divItens);
+
+  if (resultado.erro) {
+    const aviso = document.createElement('div');
+    aviso.className = 'vazio';
+    aviso.textContent = resultado.erro;
+    corpo.appendChild(aviso);
+    return;
+  }
+
+  const tabela = criarTabelaPagamento(resultado, rodada.pagamentos, () => {
+    salvarHistorico();
+    atualizarCabecalhoRodada(id);
+  });
+  corpo.appendChild(tabela);
+}
+
+function atualizarCabecalhoRodada(id) {
+  const rodada = historico.find(r => r.id === id);
+  if (!rodada) return;
+  const el = document.getElementById('status_' + id);
+  if (!el) return;
+  const nomes = Object.keys(rodada.pagamentos);
+  const pagos = nomes.filter(n => rodada.pagamentos[n]).length;
+  const resultado = calcularDetalhes(rodada.pedidos, rodada.precoIndividual, rodada.precoComum);
+  const totalPessoas = resultado.erro ? nomes.length : resultado.pessoas.length;
+  const pagosReal = resultado.erro ? pagos : resultado.pessoas.filter(p => rodada.pagamentos[p.nome]).length;
+  el.textContent = `${pagosReal} de ${totalPessoas} pagaram`;
+}
+
+function renderizarHistorico() {
+  const container = document.getElementById('listaHistorico');
+  if (historico.length === 0) {
+    container.innerHTML = '<div class="vazio">Nenhum pedido salvo ainda.</div>';
+    return;
+  }
+  container.innerHTML = '';
+  historico.forEach(rodada => {
+    const resultado = calcularDetalhes(rodada.pedidos, rodada.precoIndividual, rodada.precoComum);
+    const totalPessoas = resultado.erro ? Object.keys(rodada.pagamentos).length : resultado.pessoas.length;
+    const pagos = resultado.erro
+      ? Object.values(rodada.pagamentos).filter(Boolean).length
+      : resultado.pessoas.filter(p => rodada.pagamentos[p.nome]).length;
+
+    const card = document.createElement('div');
+    card.className = 'rodada-card';
+    card.innerHTML = `
+      <div class="rodada-cabecalho" onclick="alternarRodada('${rodada.id}')">
+        <div class="rodada-cabecalho-info">
+          <div class="rodada-data">${rodada.dataCriacao}</div>
+          <div class="rodada-status" id="status_${rodada.id}">${pagos} de ${totalPessoas} pagaram</div>
+        </div>
+        <button class="rodada-excluir" onclick="event.stopPropagation(); excluirRodada('${rodada.id}')">✕</button>
+      </div>
+      <div class="rodada-corpo" id="corpo_${rodada.id}"></div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+/* ---------- Ações gerais ---------- */
 document.getElementById('btnImprimir').onclick = () => window.print();
 
 document.getElementById('btnLimpar').onclick = () => {
-  if (pedidos.length > 0 && confirm('Tem certeza que quer apagar todos os pedidos?')) {
+  if (pedidos.length > 0 && confirm('Tem certeza que quer apagar os pedidos da rodada atual? (o histórico salvo não é afetado)')) {
     pedidos = [];
     salvar();
+    pagamentosAtual = {};
+    ultimoCalculo = null;
+    document.getElementById('resultadoPagamento').innerHTML = '';
     renderizar();
   }
 };
 
 montarOpcoes();
 renderizar();
+renderizarHistorico();
 </script>
 
 </body>
