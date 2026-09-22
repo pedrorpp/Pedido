@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pedido do Grupo</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <style>
   :root {
     --amarelo: #e8a33d;
@@ -24,6 +26,12 @@
   }
   h1 { text-align: center; font-size: 1.6em; margin-bottom: 4px; }
   .subtitulo { text-align: center; color: #7a6b52; margin-bottom: 20px; font-size: 0.95em; }
+  .status-nuvem {
+    text-align: center; font-size: 0.8em; margin: -12px 0 16px 0; padding: 6px;
+    border-radius: 6px; font-weight: 600;
+  }
+  .status-nuvem.sincronizado { background: #e2f2e2; color: #2f6b2f; }
+  .status-nuvem.local { background: #f7ecec; color: #8a4a4a; }
   .opcoes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
   .opcao-btn {
     background: white; border: 2px solid var(--borda); border-radius: 10px;
@@ -139,6 +147,7 @@
 
 <h1>🥟 Pedido do Grupo</h1>
 <div class="subtitulo">Toque na opção, digite o nome de quem pediu</div>
+<div class="status-nuvem" id="statusNuvem"></div>
 
 <div class="opcoes" id="opcoes"></div>
 
@@ -206,7 +215,41 @@ const TIPOS = [
   "Pão de queijo", "Salgado", "Assado", "Quibe", "Bacalhau"
 ];
 
-/* ---------- Armazenamento seguro ---------- */
+/* ======================================================
+   CONFIGURAÇÃO DA NUVEM (Firebase) — sincroniza entre aparelhos
+   Siga o passo a passo para criar seu projeto grátis no Firebase
+   e cole aqui os valores que ele te der. Enquanto não preencher,
+   o app funciona normalmente, só que sem sincronizar entre aparelhos.
+====================================================== */
+const firebaseConfig = {
+  apiKey: "COLE_AQUI_SUA_API_KEY",
+  authDomain: "COLE_AQUI_SEU_AUTH_DOMAIN",
+  databaseURL: "COLE_AQUI_SUA_DATABASE_URL",
+  projectId: "COLE_AQUI_SEU_PROJECT_ID",
+  storageBucket: "COLE_AQUI_SEU_STORAGE_BUCKET",
+  messagingSenderId: "COLE_AQUI_SEU_MESSAGING_SENDER_ID",
+  appId: "COLE_AQUI_SEU_APP_ID"
+};
+
+let nuvemAtiva = false;
+let dbPedidosRef = null;
+let dbHistoricoRef = null;
+
+function iniciarNuvem() {
+  if (!firebaseConfig.apiKey || firebaseConfig.apiKey.indexOf('COLE_AQUI') === 0) return false;
+  try {
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    dbPedidosRef = db.ref('pasteisGrupo/pedidosAtuais');
+    dbHistoricoRef = db.ref('pasteisGrupo/historico');
+    return true;
+  } catch (e) {
+    console.error('Erro ao iniciar sincronização na nuvem:', e);
+    return false;
+  }
+}
+
+/* ---------- Armazenamento local (usado sempre como reserva) ---------- */
 const storageDisponivel = (() => {
   try {
     const t = '__teste__';
@@ -229,11 +272,44 @@ function gravarLS(chave, valor) {
 let pedidos = lerLS('pedidosPasteis', []);
 let historico = lerLS('pedidosHistorico', []);
 let tipoAtual = null;
-let pagamentosAtual = {};       // checklist de pagamento da rodada atual (não salva ainda)
-let ultimoCalculo = null;       // {precoIndividual, precoComum} da última vez que "Calcular" rodou com sucesso
+let pagamentosAtual = {};
+let ultimoCalculo = null;
 
-function salvar() { gravarLS('pedidosPasteis', pedidos); }
-function salvarHistorico() { gravarLS('pedidosHistorico', historico); }
+function salvar() {
+  gravarLS('pedidosPasteis', pedidos);
+  if (nuvemAtiva && dbPedidosRef) dbPedidosRef.set(pedidos).catch(e => console.error('Erro ao sincronizar:', e));
+}
+function salvarHistorico() {
+  gravarLS('pedidosHistorico', historico);
+  if (nuvemAtiva && dbHistoricoRef) dbHistoricoRef.set(historico).catch(e => console.error('Erro ao sincronizar:', e));
+}
+
+function atualizarStatusNuvem() {
+  const el = document.getElementById('statusNuvem');
+  if (nuvemAtiva) {
+    el.className = 'status-nuvem sincronizado';
+    el.textContent = '☁️ Sincronizado entre aparelhos';
+  } else {
+    el.className = 'status-nuvem local';
+    el.textContent = '📴 Sincronização não configurada — dados só neste aparelho';
+  }
+}
+
+nuvemAtiva = iniciarNuvem();
+atualizarStatusNuvem();
+
+if (nuvemAtiva) {
+  dbPedidosRef.on('value', snap => {
+    pedidos = snap.val() || [];
+    gravarLS('pedidosPasteis', pedidos);
+    renderizar();
+  });
+  dbHistoricoRef.on('value', snap => {
+    historico = snap.val() || [];
+    gravarLS('pedidosHistorico', historico);
+    renderizarHistorico();
+  });
+}
 
 /* ---------- Botões de opções ---------- */
 function montarOpcoes() {
